@@ -1,43 +1,11 @@
 #include <string>
 #include <vector>
-#include <iostream>
-using namespace std;
-
+#include "D:/0.C++/ThuVienTaoSan/Date.h"
 void XoaBoDem(){
     while (cin.get() != '\n') {
         continue;
     }
 }
-class Date
-{
-    int day, month, year;
-
-public:
-    Date(int day = 1, int month = 1, int year = 2000) : day(day), month(month), year(year) {}
-
-public:
-    friend istream &operator>>(istream &in, Date &d)
-    {
-        cout << "\n\tngay: ";
-        in >> d.day;
-        cout << "\tthang: ";
-        in >> d.month;
-        cout << "\tnam: ";
-        in >> d.year;
-        return in;
-    }
-    friend ostream &operator<<(ostream &out, const Date &d)
-    {
-        if (d.day < 10)
-            out << 0;
-        out << d.day << '/';
-        if (d.month < 10)
-            out << 0;
-        out << d.month << '/';
-        return out << d.year;
-    }
-};
-
 class Person
 {
 protected:
@@ -50,27 +18,26 @@ public:
     Person(string cccd = "038204008212", string HoTen = "Le Dang Quang", Date NgaySinh = Date(15, 10, 2004), string QueQuan = "Thanh Hoa") : cccd(cccd), HoTen(HoTen), NgaySinh(NgaySinh), QueQuan(QueQuan) {}
 
 public:
-    void SetPerson()
-    {
+    friend ostream &operator << (ostream &out, const Person &p){
+        return out << p.HoTen << endl
+             << p.NgaySinh << endl
+             << p.QueQuan << endl
+             << p.cccd << endl;
+    }
+    friend istream &operator >> (istream &in, Person &p){
         cout << "Nhap ten: ";
-        getline(cin, HoTen);
+        getline(in, p.HoTen);
         cout << "Nhap ngay sinh:";
-        cin >> NgaySinh;
+        in >> p.NgaySinh;
         XoaBoDem();
         cout << "Nhap cccd: ";
-        cin >> cccd;
+        in >> p.cccd;
         XoaBoDem();
         cout << "Nhap que quan: ";
-        getline(cin, QueQuan);
+        getline(in, p.QueQuan);
+        return in;
     }
-
-    void PrintPerson()
-    {
-        cout << HoTen << endl
-             << NgaySinh << endl
-             << QueQuan << endl
-             << cccd << endl;
-    }
+    
 };
 class F0 : public Person
 {
@@ -80,28 +47,28 @@ class F0 : public Person
 
 public:
     F0(Date NgayXetNghiem = Date(1, 1, 2019), Date NgayBatDauDieuTri = Date(1, 1, 2019), Date NgayKetThucDieuTri = Date(1, 1, 2023), bool KetQuaDieuTri = true, string BenhVien = "Bach Mai") : Person(), NgayXetNghiem(NgayXetNghiem), NgayBatDauDieuTri(NgayBatDauDieuTri), NgayKetThucDieuTri(NgayKetThucDieuTri), KetQuaDieuTri(KetQuaDieuTri), BenhVien(BenhVien) {}
-    void SetF0()
-    {
-        SetPerson();
+    
+    friend ostream &operator <<(ostream &out, const F0 &f0){
+        out << static_cast <const Person &>(f0)
+        << "Xet nghiem ngay: " << f0.NgayXetNghiem << endl
+        << "Dieu tri tu ngay: " << f0.NgayBatDauDieuTri << " den " << f0.NgayKetThucDieuTri << " tai benh vien " << f0.BenhVien
+        << "\nKet qua: " << (f0.KetQuaDieuTri ? "duong tinh" : "am tinh");
+        return out;
+    }
+    friend istream &operator<< (istream &in, F0 &f0){
+        in >> static_cast<Person &>(f0);
         cout << "Nhap ngay xet nghiem: ";
-        cin >> NgayXetNghiem;
+        in >> f0.NgayXetNghiem;
         cout << "Nhap ngay bat dau dieu tri: ";
-        cin >> NgayBatDauDieuTri;
+        in >> f0.NgayBatDauDieuTri;
         cout << "Nhap ngay ket thuc dieu tri: ";
-        cin >> NgayKetThucDieuTri;
+        in >> f0.NgayKetThucDieuTri;
         cout << "Nhap ngay ket qua dieu tri(1/0): ";
-        cin >> KetQuaDieuTri;
+        in >> f0.KetQuaDieuTri;
         XoaBoDem();
         cout << "Nhap benh vien dieu tri: ";
-        getline(cin, BenhVien);
-    }
-    void PrintF0()
-    {
-        PrintPerson();
-        cout << "Xet nghiem ngay: " << NgayXetNghiem << endl;
-        cout << "Dieu tri tu ngay: " << NgayBatDauDieuTri << " den " << NgayKetThucDieuTri << " tai benh vien " << BenhVien;
-        cout << "\nKet qua: " << (KetQuaDieuTri ? "duong tinh" : "am tinh") << endl;
-      
+        getline(in, f0.BenhVien);
+        return in;
     }
 };
 class F1 : public Person
@@ -118,66 +85,68 @@ public:
        Date NgayKetThucCachLy = Date(1, 1, 2019),
        string DiaDiemCachLy = "Dai hoc Bach Khoa Ha Noi",
        bool KetQuaXetNghiem = true,
-       int SoNguoiTiepXuc = 0,
-       vector<F0> DanhSachTiepXuc = {}) : Person(),
+       int SoNguoiTiepXuc = 1,
+       vector<F0> DanhSachTiepXuc = {F0()}) : Person(),
                                           SoNguoiTiepXuc(SoNguoiTiepXuc),
                                           NgayXetNghiem(NgayXetNghiem), NgayBatDauCachLy(NgayBatDauCachLy),
                                           NgayKetThucCachLy(NgayKetThucCachLy), DiaDiemCachLy(DiaDiemCachLy), KetQuaXetNghiem(KetQuaXetNghiem),
                                           DanhSachTiepXuc(DanhSachTiepXuc) {}
 
 public:
-    void PrintF1()
-    {
-        PrintPerson();
-        cout << "Ket qua xet nghiem: " << (KetQuaXetNghiem ? "duong tinh" : "am tinh");
-        cout << "\nXet nghiem ngay: " << NgayXetNghiem;
-        cout << "\nCach ly tu ngay: " << NgayBatDauCachLy << " den ngay " << NgayKetThucCachLy << " tai " << DiaDiemCachLy;
-        if (SoNguoiTiepXuc)
+    friend ostream &operator<<(ostream &out, const F1 &f1){
+        out << static_cast<const Person &>(f1) << endl
+        << "Ket qua xet nghiem: " << (f1.KetQuaXetNghiem ? "duong tinh" : "am tinh")
+        << "\nXet nghiem ngay: " << f1.NgayXetNghiem
+        << "\nCach ly tu ngay: " << f1.NgayBatDauCachLy << " den ngay " << f1.NgayKetThucCachLy << " tai " << f1.DiaDiemCachLy;
+        if (f1.SoNguoiTiepXuc)
         {
-            cout << "\n\nDa tiep xuc voi " << SoNguoiTiepXuc << " F0: \n";
-            for (int i = 0; i < SoNguoiTiepXuc; i++)
+            out << "\n\nDa tiep xuc voi " << f1.SoNguoiTiepXuc << " F0: \n";
+            for (int i = 0; i < f1.SoNguoiTiepXuc; i++)
             {
-                DanhSachTiepXuc[i].PrintF0();
-                cout << endl;
+                out << f1.DanhSachTiepXuc[i];
+                out << endl;
             }
         }
         else
         {
-            cout << "\nChua tiep xuc voi F0 nao!\n";
+            out << "\nChua tiep xuc voi F0 nao!\n";
         }
+        return out;
     }
-    void SetF1()
-    {
-        SetPerson();
+    friend istream &operator >> (istream &in, F1 &f1){
+        in >> static_cast<Person &>(f1);
         cout << "Nhap ngay xet nghiem: ";
-        cin >> NgayXetNghiem;
+        in >> f1.NgayXetNghiem;
         cout << "Nhap ngay bat dau cach ly: ";
-        cin >> NgayBatDauCachLy;
+        in >> f1.NgayBatDauCachLy;
         cout << "Nhap ngay ket thuc cach ly: ";
-        cin >> NgayKetThucCachLy;
+        in >> f1.NgayKetThucCachLy;
         XoaBoDem();
         cout << "Nhap dia chi cach ly: ";
-        getline(cin, DiaDiemCachLy);
+        getline(in, f1.DiaDiemCachLy);
         cout << "Nhap ket qua xet nghiem(1/0): ";
-        cin >> KetQuaXetNghiem;
+        in >> f1.KetQuaXetNghiem;
         cout << "Nhap so nguoi tiep xuc: ";
-        cin >> SoNguoiTiepXuc;
+        in >> f1.SoNguoiTiepXuc;
         XoaBoDem();
-        DanhSachTiepXuc.clear();
-        for (int i = 0; i < SoNguoiTiepXuc; i++)
+        f1.DanhSachTiepXuc.clear();
+        for (int i = 0; i < f1.SoNguoiTiepXuc; i++)
         {
             cout << "Nhap nguoi F0 thu " << i + 1 << endl;
             F0 f0;
-            f0.SetF0();
-            DanhSachTiepXuc.push_back(f0);
+            cin << f0;
+            f1.DanhSachTiepXuc.push_back(f0);
             XoaBoDem();
         }
+        return in;
     }
+   
 };
 int main()
 {
     F1 quang;
-    quang.SetF1();
-    quang.PrintF1();
+    cin >> quang;
+    cout << quang;
+
     return 0;
 }
